@@ -146,6 +146,78 @@ var Keychain = {
     });
   },
 
+  /**
+   * Saves any generic object for `service` (defaults to `bundleId`)
+   * and calls `callback` with an `Error` if there is any.
+   * Returns a `Promise` object.
+   */
+  setGenericObject: function(
+    service?: string,
+	object: map,
+    callback?: ?(error: ?Error) => void
+  ): Promise {
+    return new Promise((resolve, reject) => {
+
+		console.log('service : ', service);
+		console.log('object : ', object);
+      RNKeychainManager.setObjectForService(service, object, function(err) {
+        callback && callback((err && convertError(err)) || null);
+        if (err) {
+          reject(convertError(err));
+        } else {
+          resolve();
+        }
+      });
+    });
+  },
+
+  /**
+   * Fetches generic object for `service` (defaults to `bundleId`)
+   * and passes the result to `callback`, along with an `Error` if
+   * there is any.
+   * Returns a `Promise` object.
+   */
+  getGenericObject: function(
+    service?: string,
+    callback?: ?(error: ?Error, result: ?string) => void
+  ): Promise {
+    return new Promise((resolve, reject) => {
+      RNKeychainManager.getObjectForService(service, function(err, object) {
+        err = convertError(err);
+        if(!err && arguments.length === 1) {
+          err = new Error('No keychain entry found' + (service ? ' for service "' + service + '"' : ''));
+        }
+        callback && callback((err && convertError(err)) || null, object);
+        if (err) {
+          reject(convertError(err));
+        } else {
+          resolve(object);
+        }
+      });
+    });
+  },
+
+  /**
+   * Deletes all generic object entries for `service` (defaults to `bundleId`) and calls
+   * `callback` with an `Error` if there is any.
+   * Returns a `Promise` object.
+   */
+  resetGenericObject: function(
+    service?: string,
+    callback?: ?(error: ?Error) => void
+  ): Promise {
+    return new Promise((resolve, reject) => {
+      RNKeychainManager.resetGenericPasswordForService(service, function(err) {
+        callback && callback((err && convertError(err)) || null);
+        if (err) {
+          reject(convertError(err));
+        } else {
+          resolve();
+        }
+      });
+    });
+  },
+
 };
 
 function convertError(err) {
