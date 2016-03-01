@@ -179,7 +179,7 @@ var Keychain = {
    */
   getGenericObject: function(
     service?: string,
-    callback?: ?(error: ?Error, result: ?string) => void
+    callback?: ?(error: ?Error, result: ?object) => void
   ): Promise {
     return new Promise((resolve, reject) => {
       RNKeychainManager.getObjectForService(service, function(err, object) {
